@@ -1,20 +1,27 @@
 import unittest
-from src.textnode import TextNode
+from src.textnode import TextNode, TextType
 
 
 class TestTextNode(unittest.TestCase):
+    def setUp(self):
+        self.nodes = [TextNode("foo", TextType("bold")), TextNode("foo", TextType("italic"), "https://boot.dev")]
+
     def test_equality(self):
-        node1 = TextNode("foo", "bar", "foobar")
-        node2 = TextNode("foo", "bar", "foobar")
-        self.assertEqual(node1, node2)
+        test_nodes = [TextNode("foo", TextType("bold")), TextNode("foo", TextType("italic"), "https://boot.dev")]
+
+        for node, test_node in zip(self.nodes, test_nodes):
+            self.assertEqual(node, test_node)
 
     def test_inequality(self):
-        base_case = TextNode("foo", "bar", "foobar")
-        test_cases = (
-            TextNode("bar", "bar", "foobar"),
-            TextNode("foo", "foo", "foobar"),
-            TextNode("foo", "bar", "barfoo"),
-            TextNode("foo", "bar"),
+        test_nodes = (
+            TextNode("bar", TextType("bold")),
+            TextNode("foo", TextType("italic")),
         )
-        for case in test_cases:
-            self.assertNotEqual(case, base_case)
+        for node, test_node in zip(self.nodes, test_nodes):
+            self.assertNotEqual(node, test_node)
+
+    def test_repr(self):
+        test_nodes = ["TextNode(foo, bold, None)", "TextNode(foo, italic, https://boot.dev)"]
+
+        for node, test_node in zip(self.nodes, test_nodes):
+            self.assertEqual(repr(node), test_node)
