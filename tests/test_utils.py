@@ -8,6 +8,8 @@ from src.utils import (
     split_node_delimiters,
     find_delimiter,
     match_delimiter,
+    extract_markdown_links,
+    extract_markdown_images,
 )
 
 
@@ -97,3 +99,47 @@ class TextNodeDelimiter(unittest.TestCase):
             TextNode("This is plain text with no delimiters", TextType.TEXT),
         ]
         self.assertEqual(split_node_delimiters(nodes), expected)
+
+
+class TestExtractMarkdown(unittest.TestCase):
+    def test_extract_markdown_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        self.assertEqual(extract_markdown_images(text), expected)
+
+    def test_extract_markdown_images_not_extract_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        expected = []
+        self.assertEqual(extract_markdown_images(text), expected)
+
+    def test_extract_markdown_images_not_extract_unrelated_text(self):
+        cases = [
+            "This is some text (in parenthesis)",
+            "This is some text [in braces]",
+            "This is some text (in parenthesis) and [in braces]",
+        ]
+
+        expected = []
+        for case in cases:
+            self.assertEqual(extract_markdown_images(case), expected)
+
+    def test_extract_markdown_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        expected = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertEqual(extract_markdown_links(text), expected)
+
+    def test_extract_markdown_links_not_extract_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        expected = []
+        self.assertEqual(extract_markdown_links(text), expected)
+
+    def test_extract_markdown_links_not_extract_unrelated_text(self):
+        cases = [
+            "This is some text (in parenthesis)",
+            "This is some text [in braces]",
+            "This is some text (in parenthesis) and [in braces]",
+        ]
+
+        expected = []
+        for case in cases:
+            self.assertEqual(extract_markdown_links(case), expected)
