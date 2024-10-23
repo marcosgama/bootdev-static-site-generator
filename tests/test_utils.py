@@ -2,10 +2,16 @@ import unittest
 
 from src.leafnode import LeafNode
 from src.textnode import TextNode, TextType
-from src.utils import text_node_to_html_node
+from src.utils import (
+    text_node_to_html_node,
+    split_node_delimiter,
+    split_node_delimiters,
+    find_delimiter,
+    match_delimiter,
+)
 
 
-class TestUtils(unittest.TestCase):
+class TestNodeToHTMLNode(unittest.TestCase):
     def setUp(self):
         self.nodes = [
             TextNode("bar", TextType("text"), None),
@@ -13,8 +19,7 @@ class TestUtils(unittest.TestCase):
             TextNode("foobar", TextType("italic"), None),
             TextNode("print(hello world)", TextType("code"), None),
             TextNode(None, TextType("link"), "https://www.boot.dev"),
-            TextNode("img alt text", TextType(
-                "image"), "https://www.boot.dev"),
+            TextNode("img alt text", TextType("image"), "https://www.boot.dev"),
         ]
 
     def test_text_node_to_html_node(self):
@@ -24,8 +29,71 @@ class TestUtils(unittest.TestCase):
             LeafNode("i", "foobar", None),
             LeafNode("code", "print(hello world)", None),
             LeafNode("a", None, {"href": "https://www.boot.dev"}),
-            LeafNode(
-                "img", "", {"src": "https://www.boot.dev", "alt": "img alt text"}),
+            LeafNode("img", "", {"src": "https://www.boot.dev", "alt": "img alt text"}),
         ]
         for node, test_case in zip(self.nodes, expected):
             self.assertEqual(text_node_to_html_node(node), test_case)
+
+
+class TextNodeDelimiter(unittest.TestCase):
+    def test_find_delimiter(self):
+        test_text = ["this is **italic**", "this is *bold*", "this is `a code block`"]
+
+        expected = ["**", "*", "`"]
+
+        for test, exp in zip(test_text, expected):
+            self.assertEqual(find_delimiter(test), exp)
+
+    def test_match_delimiter(self):
+        delimiters = ["**", "*", "`", "-"]
+        expected = [TextType.ITALIC, TextType.BOLD, TextType.CODE]
+
+        for test, exp in zip(delimiters, expected):
+            if test != "-":
+                self.assertEqual(match_delimiter(test), exp)
+            self.assertRaises(ValueError)
+
+    def test_split_node_delimiter(self):
+        node = [
+            TextNode("This is text with a `code block` word", TextType.TEXT),
+            TextNode("This is plain text with no delimiter", TextType.TEXT),
+        ]
+        expected = [
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" word", TextType.TEXT),
+            ],
+            TextNode("This is plain text with no delimiter", TextType.TEXT),
+        ]
+
+        for test, exp in zip(node, expected):
+            self.assertEqual(split_node_delimiter(test), exp)
+
+    def test_split_node_delimiter_list_of_nodes(self):
+        nodes = [
+            TextNode("This is text with a `code block` word", TextType.TEXT),
+            TextNode("This is text with a **italic block** word", TextType.TEXT),
+            TextNode("This is text with a *bold block* word", TextType.TEXT),
+            TextNode("This is plain text with no delimiters", TextType.TEXT),
+        ]
+
+        expected = [
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" word", TextType.TEXT),
+            ],
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("italic block", TextType.ITALIC),
+                TextNode(" word", TextType.TEXT),
+            ],
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("bold block", TextType.BOLD),
+                TextNode(" word", TextType.TEXT),
+            ],
+            TextNode("This is plain text with no delimiters", TextType.TEXT),
+        ]
+        self.assertEqual(split_node_delimiters(nodes), expected)
