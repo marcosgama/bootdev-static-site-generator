@@ -6,8 +6,8 @@ from src.leafnode import LeafNode
 class TestLeafNode(unittest.TestCase):
     def setUp(self):
         self.nodes = [
-            LeafNode("This is a paragraph", "p"),
-            LeafNode("This is a paragraph", "p", {"style": "text-align: right"}),
+            LeafNode("p", "This is a paragraph"),
+            LeafNode("p", "This is a paragraph", {"style": "text-align: right"}),
         ]
 
     def test_to_html(self):
