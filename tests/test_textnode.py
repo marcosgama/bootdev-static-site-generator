@@ -1,5 +1,7 @@
 import unittest
+
 from src.textnode import TextNode, TextType
+from src.leafnode import LeafNode
 
 
 class TestTextNode(unittest.TestCase):
@@ -35,3 +37,29 @@ class TestTextNode(unittest.TestCase):
 
         for node, test_node in zip(self.nodes, test_nodes):
             self.assertEqual(repr(node), test_node)
+
+
+class TestTextNodeToHTMLNode(unittest.TestCase):
+    def setUp(self):
+        self.nodes = [
+            TextNode("bar", TextType("text"), (0, 1), None),
+            TextNode("foo", TextType("bold"), (0, 1), None),
+            TextNode("foobar", TextType("italic"), (0, 1), None),
+            TextNode("print(hello world)", TextType("code"), (0, 1), None),
+            TextNode(None, TextType("link"), (0, 1), "https://www.boot.dev"),
+            TextNode("img alt text", TextType("image"),
+                     (0, 1), "https://www.boot.dev"),
+        ]
+
+    def test_text_node_to_html_node(self):
+        expected = [
+            LeafNode(None, "bar", None),
+            LeafNode("b", "foo", None),
+            LeafNode("i", "foobar", None),
+            LeafNode("code", "print(hello world)", None),
+            LeafNode("a", None, {"href": "https://www.boot.dev"}),
+            LeafNode(
+                "img", "", {"src": "https://www.boot.dev", "alt": "img alt text"}),
+        ]
+        for node, test_case in zip(self.nodes, expected):
+            self.assertEqual(node.to_html(), test_case)
