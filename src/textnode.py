@@ -7,6 +7,7 @@ class Patterns(Enum):
     IMAGE = r"!\[(.*?)\]\((.*?)\)"
     ITALIC = r"(?<!\*)\*(?!\*)(.*?)\*(?!\*)"
     LINK = r"(?<!\!)\[(.*?)\]\((.*?)\)"
+    BLOCK = r"\n(?![*\-+]\s|\d+\. )"
 
 
 class TextType(Enum):
