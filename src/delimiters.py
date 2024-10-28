@@ -1,40 +1,7 @@
 import re
-from src.textnode import TextNode, TextType, Patterns
-from src.htmlnode import HTMLNode
-from src.leafnode import LeafNode
 
-
-def text_node_to_html_node(text_node: TextNode) -> HTMLNode:
-    match text_node.text_type:
-        case TextType.TEXT:
-            return LeafNode(None, text_node.text, None)
-        case TextType.BOLD:
-            return LeafNode("b", text_node.text, None)
-        case TextType.ITALIC:
-            return LeafNode("i", text_node.text, None)
-        case TextType.CODE:
-            return LeafNode("code", text_node.text, None)
-        case TextType.LINK:
-            return LeafNode("a", text_node.text, {"href": text_node.url})
-        case TextType.IMAGE:
-            return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
-        case _:
-            raise ValueError("Unsupported text type")
-
-
-def match_text_type(text: str) -> TextType:
-    if "**" in text:
-        return TextType.BOLD
-    elif "*" in text:
-        return TextType.ITALIC
-    elif "`" in text:
-        return TextType.CODE
-    elif "![" in text:
-        return TextType.IMAGE
-    elif "[" in text:
-        return TextType.LINK
-    else:
-        raise ValueError("No valid delimiter found")
+from src.textnode import TextNode, TextType
+from src.matchers import match_text_type, match_block_type
 
 
 def delimit_inline_nodes(text: str, patterns=list[str]) -> list[TextNode]:

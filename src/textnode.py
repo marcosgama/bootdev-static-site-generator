@@ -1,13 +1,6 @@
 from enum import Enum
 
-
-class Patterns(Enum):
-    BOLD = r"\*\*(?!\*)(.*?)\*\*"
-    CODE = r"\`(.*?)\`"
-    IMAGE = r"!\[(.*?)\]\((.*?)\)"
-    ITALIC = r"(?<!\*)\*(?!\*)(.*?)\*(?!\*)"
-    LINK = r"(?<!\!)\[(.*?)\]\((.*?)\)"
-    BLOCK = r"\n(?![*\-+]\s|\d+\. )"
+from src.leafnode import LeafNode
 
 
 class TextType(Enum):
@@ -72,3 +65,20 @@ class TextNode:
 
     def __ge__(self, other: "TextNode") -> bool:
         return self.span >= other.span
+
+    def to_html(self) -> LeafNode:
+        match self.text_type:
+            case TextType.TEXT:
+                return LeafNode(None, self.text, None)
+            case TextType.BOLD:
+                return LeafNode("b", self.text, None)
+            case TextType.ITALIC:
+                return LeafNode("i", self.text, None)
+            case TextType.CODE:
+                return LeafNode("code", self.text, None)
+            case TextType.LINK:
+                return LeafNode("a", self.text, {"href": self.url})
+            case TextType.IMAGE:
+                return LeafNode("img", "", {"src": self.url, "alt": self.text})
+            case _:
+                raise ValueError("Unsupported text type")
