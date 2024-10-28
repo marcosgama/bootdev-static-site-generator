@@ -16,4 +16,4 @@ class BlockPatterns(Enum):
     CODE = r"^`{3}.+"
     QUOTE = r"^>+ .+"
     OLIST = r"^\s*\d. .+"
-    ULIST = r"^\s*-|"
+    ULIST = r"^\*|-"
