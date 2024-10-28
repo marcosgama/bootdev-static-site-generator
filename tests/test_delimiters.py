@@ -1,7 +1,8 @@
 import unittest
 
 from src.leafnode import LeafNode
-from src.textnode import TextNode, TextType, Patterns
+from src.textnode import TextNode, TextType
+from src.patterns import TextPatterns, BlockPatterns
 from src.splitters import (
     text_node_to_html_node,
     match_text_type,
@@ -57,11 +58,11 @@ class TestDelimitNodes(unittest.TestCase):
     def setUp(self):
         self.test_text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev) and some more text"
         self.patterns = [
-            Patterns.BOLD.value,
-            Patterns.CODE.value,
-            Patterns.ITALIC.value,
-            Patterns.LINK.value,
-            Patterns.IMAGE.value,
+            TextPatterns.BOLD.value,
+            TextPatterns.CODE.value,
+            TextPatterns.ITALIC.value,
+            TextPatterns.LINK.value,
+            TextPatterns.IMAGE.value,
         ]
 
     def test_delimit_inline_nodes(self):
@@ -143,4 +144,4 @@ And more unordered lists
         ]
 
         self.assertEqual(delimit_blocks(
-            self.text, Patterns.BLOCK.value), expected)
+            self.text, TextPatterns.BLOCK.value), expected)
