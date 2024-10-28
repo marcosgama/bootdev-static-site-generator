@@ -1,6 +1,12 @@
 from enum import Enum
 
-from src.leafnode import LeafNode
+from src.htmlnode import LeafNode
+
+
+class NodeType(Enum):
+    HTML = "html"
+    LEAF = "leaf"
+    TEXT = "text"
 
 
 class TextType(Enum):

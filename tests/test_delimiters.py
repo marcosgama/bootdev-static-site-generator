@@ -1,57 +1,13 @@
 import unittest
 
-from src.leafnode import LeafNode
 from src.textnode import TextNode, TextType
 from src.patterns import TextPatterns, BlockPatterns
-from src.splitters import (
-    text_node_to_html_node,
-    match_text_type,
+from src.delimiters import (
     delimit_text_nodes,
     delimit_inline_nodes,
     delimit_nodes,
     delimit_blocks,
 )
-
-
-class TestNodeToHTMLNode(unittest.TestCase):
-    def setUp(self):
-        self.nodes = [
-            TextNode("bar", TextType("text"), (0, 1), None),
-            TextNode("foo", TextType("bold"), (0, 1), None),
-            TextNode("foobar", TextType("italic"), (0, 1), None),
-            TextNode("print(hello world)", TextType("code"), (0, 1), None),
-            TextNode(None, TextType("link"), (0, 1), "https://www.boot.dev"),
-            TextNode("img alt text", TextType("image"),
-                     (0, 1), "https://www.boot.dev"),
-        ]
-
-    def test_text_node_to_html_node(self):
-        expected = [
-            LeafNode(None, "bar", None),
-            LeafNode("b", "foo", None),
-            LeafNode("i", "foobar", None),
-            LeafNode("code", "print(hello world)", None),
-            LeafNode("a", None, {"href": "https://www.boot.dev"}),
-            LeafNode(
-                "img", "", {"src": "https://www.boot.dev", "alt": "img alt text"}),
-        ]
-        for node, test_case in zip(self.nodes, expected):
-            self.assertEqual(text_node_to_html_node(node), test_case)
-
-
-class TestMatchTextType(unittest.TestCase):
-    def test_match_text_type(self):
-        test_case = ["*foo*", "**foo**", "`foo`", "[foo]", "![foo]"]
-
-        expected = [TextType.ITALIC, TextType.BOLD,
-                    TextType.CODE, TextType.LINK, TextType.IMAGE]
-
-        for text, expected in zip(test_case, expected):
-            self.assertEqual(match_text_type(text), expected)
-
-    def test_fails_unknown_delimiter(self):
-        test_case = "$foo$"
-        self.assertRaises(ValueError, match_text_type, test_case)
 
 
 class TestDelimitNodes(unittest.TestCase):

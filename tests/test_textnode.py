@@ -1,7 +1,7 @@
 import unittest
 
 from src.textnode import TextNode, TextType
-from src.leafnode import LeafNode
+from src.htmlnode import LeafNode
 
 
 class TestTextNode(unittest.TestCase):

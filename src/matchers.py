@@ -26,7 +26,9 @@ def match_block_type(text: str) -> str:
         return "code"
     elif re.match(BlockPatterns.QUOTE.value, text, re.DOTALL):
         return "quote"
-    elif re.match(BlockPatterns.ULIST.value, text):
+    elif re.match(BlockPatterns.ULIST.value, text, re.DOTALL):
         return "ulist"
-    elif re.match(BlockPatterns.OLIST.value, text):
+    elif re.match(BlockPatterns.OLIST.value, text, re.DOTALL):
         return "olist"
+    else:
+        return "paragraph"
