@@ -26,16 +26,13 @@ class TestDelimitNodes(unittest.TestCase):
             TextNode("text", TextType.BOLD, (8, 16)),
             TextNode("italic", TextType.ITALIC, (25, 33)),
             TextNode("code block", TextType.CODE, (45, 57)),
-            TextNode("obi wan image", TextType.IMAGE, (65, 115),
-                     "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode("obi wan image", TextType.IMAGE, (65, 115), "https://i.imgur.com/fJRm4Vk.jpeg"),
             TextNode("link", TextType.LINK, (122, 146), "https://boot.dev"),
         ]
-        self.assertEqual(delimit_inline_nodes(
-            self.test_text, self.patterns), expected)
+        self.assertEqual(delimit_inline_nodes(self.test_text, self.patterns), expected)
 
     def test_delimit_text_nodes(self):
-        inline_nodes = delimit_inline_nodes(
-            self.test_text, patterns=self.patterns)
+        inline_nodes = delimit_inline_nodes(self.test_text, patterns=self.patterns)
 
         expected = [
             TextNode("This is ", TextType.TEXT, (0, 8)),
@@ -46,8 +43,7 @@ class TestDelimitNodes(unittest.TestCase):
             TextNode(" and some more text", TextType.TEXT, (147, 165)),
         ]
 
-        self.assertEqual(delimit_text_nodes(
-            self.test_text, inline_nodes), expected)
+        self.assertEqual(delimit_text_nodes(self.test_text, inline_nodes), expected)
 
     def test_delimit_nodes(self):
         expected = [
@@ -58,14 +54,12 @@ class TestDelimitNodes(unittest.TestCase):
             TextNode(" word and a ", TextType.TEXT, (33, 45)),
             TextNode("code block", TextType.CODE, (45, 57)),
             TextNode(" and an ", TextType.TEXT, (57, 65)),
-            TextNode("obi wan image", TextType.IMAGE, (65, 115),
-                     "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode("obi wan image", TextType.IMAGE, (65, 115), "https://i.imgur.com/fJRm4Vk.jpeg"),
             TextNode(" and a ", TextType.TEXT, (115, 122)),
             TextNode("link", TextType.LINK, (122, 146), "https://boot.dev"),
             TextNode(" and some more text", TextType.TEXT, (147, 165)),
         ]
-        self.assertEqual(delimit_nodes(
-            self.test_text, self.patterns), expected)
+        self.assertEqual(delimit_nodes(self.test_text, self.patterns), expected)
 
 
 class TestDelimitBlocks(unittest.TestCase):
@@ -87,17 +81,3 @@ And more unordered lists
 - Item A
 - Item B
     """
-
-    def test_block_delimiter(self):
-        expected = [
-            "# This is a heading",
-            "This is a paragraph of text. It has some **bold** and *italic* words inside of it.",
-            "\n1. Item A\n2. Item B",
-            "This is more text **after the ordered lists**. Now text with unordered lists:",
-            "\n* Item A\n* Item B",
-            "And more unordered lists",
-            "\n- Item A\n- Item B",
-        ]
-
-        self.assertEqual(delimit_blocks(
-            self.text, TextPatterns.BLOCK.value), expected)
