@@ -7,7 +7,7 @@ class TextPatterns(Enum):
     IMAGE = r"!\[(.*?)\]\((.*?)\)"
     ITALIC = r"(?<!\*)\*(?!\*)(.*?)\*(?!\*)"
     LINK = r"(?<!\!)\[(.*?)\]\((.*?)\)"
-    BLOCK = r"\n(?![*\-+]\s|\d+\. )"
+    BLOCK = r"\n\n(?![*\-+]\s|\d+\. )"
 
 
 # TODO OLIST and ULIST need to handle indentation
@@ -16,4 +16,4 @@ class BlockPatterns(Enum):
     CODE = r"^`{3}.+"
     QUOTE = r"^>+ .+"
     OLIST = r"^\s*\d. .+"
-    ULIST = r"^\*|-"
+    ULIST = r"^\s*[*\-+] (?=\S)"
